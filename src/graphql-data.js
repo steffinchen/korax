@@ -2,37 +2,30 @@ import React from "react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 
-export const GET_POSTS = gql`
-  query GetPosts {
-    posts {
-      id
-      author
-      body
+export const GET_DECK = gql`
+  query {
+    deck {
+      deck_id
+      remaining
+      success
+      shuffled
     }
   }
 `;
 
 export default () => (
-  <Query query={GET_POSTS}>
-    {({ loading, data }) =>
-      !loading && (
-        <table>
-          <thead>
-            <tr>
-              <th>Author</th>
-              <th>Body</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.posts.map(post => (
-              <tr key={post.id}>
-                <td>{post.author}</td>
-                <td>{post.body}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )
-    }
+  <Query query={GET_DECK}>
+    {({ loading, data }) => {
+      return (
+        !loading && (
+          <div>
+            Deck id: {data.deck.deck_id} <br />
+            Remaining: {data.deck.remaining} <br />
+            Success: {data.deck.success.toString()} <br />
+            Shuffled: {data.deck.shuffled.toString()} <br />
+          </div>
+        )
+      );
+    }}
   </Query>
 );

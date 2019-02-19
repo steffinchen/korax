@@ -1,33 +1,8 @@
 const express = require("express");
 const graphqlHTTP = require("express-graphql");
-const gql = require("graphql-tag");
-const { buildASTSchema } = require("graphql");
 const cors = require("cors");
 
-const POSTS = [
-  { author: "John Doe", body: "Hello world" },
-  { author: "Jane Doe", body: "Hi, planet!" }
-];
-
-const schema = buildASTSchema(gql`
-  type Query {
-    posts: [Post]
-    post(id: ID!): Post
-  }
-
-  type Post {
-    id: ID
-    author: String
-    body: String
-  }
-`);
-
-const mapPost = (post, id) => post && { id, ...post };
-
-const root = {
-  posts: () => POSTS.map(mapPost),
-  post: ({ id }) => mapPost(POSTS[id], id)
-};
+const { schema, root } = require("./schema");
 
 const app = express();
 
