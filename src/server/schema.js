@@ -15,6 +15,7 @@ const schema = buildASTSchema(gql`
     success: Boolean!
     shuffled: Boolean!
     cards: [Card]
+    piles: [Pile]
   }
 
   type Card {
@@ -24,8 +25,14 @@ const schema = buildASTSchema(gql`
     code: String
   }
 
+  type Pile {
+    name: String
+    remaining: String
+  }
+
   type Mutation {
     drawCard(deck_id: String!): Deck!
+    addToPile(deck_id: String!, pile_name: String!, cards: [String]!): Deck!
   }
 `);
 
@@ -41,6 +48,22 @@ const root = {
       method: "GET"
     });
     return await data.json();
+  },
+  addToPile: async ({ deck_id, pile_name, cards }) => {
+    const json = await fetch(
+      BASE_URI +
+        `deck/${deck_id}/pile/${pile_name}/add/?cards=${cards.join(",")}`,
+      {
+        method: "GET"
+      }
+    );
+    const data = await json.json();
+
+    data.piles = Object.keys(data.piles).map(key => {
+      return { name: key, remaining: data.piles[key].remaining };
+    });
+
+    return data;
   }
 };
 
