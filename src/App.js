@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Deck from "./deck";
+import Deck from "./deck-container";
 
 class App extends Component {
   render() {
