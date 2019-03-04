@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import GraphqlData from "./graphql-data";
+import Deck from "./deck";
 
 class App extends Component {
   render() {
-    return <GraphqlData />;
+    return <Deck />;
   }
 }
 

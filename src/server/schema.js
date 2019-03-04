@@ -44,7 +44,7 @@ const root = {
     return await data.json();
   },
   drawCard: async ({ deck_id }) => {
-    const data = await fetch(BASE_URI + `deck/${deck_id}/draw/?count=2`, {
+    const data = await fetch(BASE_URI + `deck/${deck_id}/draw/?count=1`, {
       method: "GET"
     });
     return await data.json();
