@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import gql from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
+import Deck from "./deck";
 
 export const GET_DECK = gql`
   query {
@@ -17,6 +18,8 @@ const DRAW_CARD = gql`
   mutation DrawCard($input: String!) {
     drawCard(deck_id: $input) {
       deck_id
+      remaining
+      success
       cards {
         image
         value
@@ -27,45 +30,41 @@ const DRAW_CARD = gql`
   }
 `;
 
-export default () => (
-  <Query query={GET_DECK}>
-    {({ loading, data: result }) => {
-      return (
-        !loading && (
-          <div>
-            <div>
-              Deck id: {result.deck.deck_id} <br />
-              Remaining: {result.deck.remaining} <br />
-              Success: {result.deck.success.toString()} <br />
-              Shuffled: {result.deck.shuffled.toString()} <br />
-            </div>
-            <Mutation mutation={DRAW_CARD}>
-              {(executeMutation, { data, loading }) => (
-                <div>
-                  <button
-                    onClick={() =>
-                      executeMutation({
-                        variables: { input: result.deck.deck_id }
-                      })
-                    }
-                  >
-                    Draw a Card
-                  </button>
-                  {data && !loading && (
-                    <div>
-                      {data.drawCard.cards.map(card => (
-                        <div key={card.code}>
-                          {card.value} of {card.suit}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </Mutation>
-          </div>
-        )
-      );
-    }}
-  </Query>
-);
+export default () => {
+  const [deck, setDeck] = useState(null);
+
+  return (
+    <Query query={GET_DECK}>
+      {({ loading, data: result }) => {
+        if (loading) return null;
+
+        setDeck(result.deck);
+
+        return (
+          <Mutation
+            mutation={DRAW_CARD}
+            update={(cache, { data: { drawCard } }) => {
+              // this is a workaround because the endpoint to draw
+              // a card does not return the 'shuffled' property
+              cache.writeQuery({
+                query: GET_DECK,
+                data: { deck: drawCard }
+              });
+              const updatedDeck = cache.readQuery({ query: GET_DECK });
+              setDeck(updatedDeck.deck);
+            }}
+          >
+            {(executeMutation, { data, loading }) => (
+              <Deck
+                deck={deck}
+                executeMutation={executeMutation}
+                data={data}
+                loading={loading}
+              />
+            )}
+          </Mutation>
+        );
+      }}
+    </Query>
+  );
+};
