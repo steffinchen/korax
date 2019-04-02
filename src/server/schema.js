@@ -38,26 +38,18 @@ const schema = buildASTSchema(gql`
 
 const root = {
   deck: async () => {
-    const data = await fetch(BASE_URI + "deck/new/shuffle", {
-      method: "GET"
-    });
-    return await data.json();
+    return await fetchJson("deck/new/shuffle");
   },
   drawCard: async ({ deck_id }) => {
-    const data = await fetch(BASE_URI + `deck/${deck_id}/draw/?count=1`, {
-      method: "GET"
-    });
-    return await data.json();
+    const data = await fetchJson(`deck/${deck_id}/draw/?count=1`);
+    const deck = await fetchJson(`deck/${deck_id}`);
+    data.shuffled = deck.shuffled;
+    return data;
   },
   addToPile: async ({ deck_id, pile_name, cards }) => {
-    const json = await fetch(
-      BASE_URI +
-        `deck/${deck_id}/pile/${pile_name}/add/?cards=${cards.join(",")}`,
-      {
-        method: "GET"
-      }
+    const data = await fetchJson(
+      `deck/${deck_id}/pile/${pile_name}/add/?cards=${cards.join(",")}`
     );
-    const data = await json.json();
 
     data.piles = Object.keys(data.piles).map(key => {
       return { name: key, remaining: data.piles[key].remaining };
@@ -65,6 +57,13 @@ const root = {
 
     return data;
   }
+};
+
+const fetchJson = async path => {
+  const data = await fetch(BASE_URI + path, {
+    method: "GET"
+  });
+  return await data.json();
 };
 
 module.exports = {

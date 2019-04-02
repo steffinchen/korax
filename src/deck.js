@@ -1,4 +1,5 @@
 import React from "react";
+import Card from "./card";
 
 export default function deck({ deck, executeMutation, data, loading }) {
   if (!deck) return null;
@@ -24,9 +25,9 @@ export default function deck({ deck, executeMutation, data, loading }) {
         {data && !loading && (
           <div>
             {data.drawCard.remaining}
-            {data.drawCard.cards.map(card => (
-              <div key={card.code}>
-                {card.value} of {card.suit}
+            {data.drawCard.cards.map((card, i) => (
+              <div key={i}>
+                <Card card={card} />
               </div>
             ))}
           </div>

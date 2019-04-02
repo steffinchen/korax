@@ -20,6 +20,7 @@ const DRAW_CARD = gql`
       deck_id
       remaining
       success
+      shuffled
       cards {
         image
         value
@@ -31,34 +32,18 @@ const DRAW_CARD = gql`
 `;
 
 export default () => {
-  const [deck, setDeck] = useState(null);
-
   return (
     <Query query={GET_DECK}>
-      {({ loading, data: result }) => {
+      {({ loading, data }) => {
         if (loading) return null;
 
-        setDeck(result.deck);
-
         return (
-          <Mutation
-            mutation={DRAW_CARD}
-            update={(cache, { data: { drawCard } }) => {
-              // this is a workaround because the endpoint to draw
-              // a card does not return the 'shuffled' property
-              cache.writeQuery({
-                query: GET_DECK,
-                data: { deck: drawCard }
-              });
-              const updatedDeck = cache.readQuery({ query: GET_DECK });
-              setDeck(updatedDeck.deck);
-            }}
-          >
-            {(executeMutation, { data, loading }) => (
+          <Mutation mutation={DRAW_CARD}>
+            {(executeMutation, { data: mutationData, loading }) => (
               <Deck
-                deck={deck}
+                deck={data.deck}
                 executeMutation={executeMutation}
-                data={data}
+                data={mutationData}
                 loading={loading}
               />
             )}
