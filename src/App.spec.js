@@ -1,11 +1,7 @@
 import React from "react";
-import enzyme, { shallow } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
-
+import { shallow } from "enzyme";
 import App from "./App";
 import Deck from "./deck-container";
-
-enzyme.configure({ adapter: new Adapter() });
 
 it("renders without crashing", () => {
   const app = shallow(<App />);
