@@ -22,7 +22,7 @@
     "start:server": "node src/server",
     "watch:server": "nodemon --watch src/server src/server",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -42,6 +42,6 @@
   },
   "jest": {
     "verbose": true,
-    "setupTestFrameworkScriptFile": "./setupTest.js"
+    "setupTestFrameworkScriptFile": "./src/setupTests.js"
   }
 }
