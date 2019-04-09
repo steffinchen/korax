@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Deck from "./deck-container";
-import Navbar from "./navbar";
+import Deck from "./components/deck-container";
+import Navbar from "./components/navbar";
 
 class App extends Component {
   render() {
