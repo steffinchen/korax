@@ -29,7 +29,7 @@ const schema = buildASTSchema(gql`
   }
 
   type Mutation {
-    drawCard(deck_id: String!): Deck!
+    drawCard(deck_id: String!, count: Int): Deck!
     addToPile(deck_id: String!, pile_name: String!, cards: [String]!): Deck!
   }
 `);
@@ -38,8 +38,8 @@ const root = {
   deck: async () => {
     return await fetchJson("deck/new/shuffle");
   },
-  drawCard: async ({ deck_id }) => {
-    const data = await fetchJson(`deck/${deck_id}/draw/?count=1`);
+  drawCard: async ({ deck_id, count }) => {
+    const data = await fetchJson(`deck/${deck_id}/draw/?count=${count || 1}`);
     const deck = await fetchJson(`deck/${deck_id}`);
     data.shuffled = deck.shuffled;
     return data;

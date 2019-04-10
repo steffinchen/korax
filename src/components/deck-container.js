@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import gql from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
 import Deck from "./deck";
@@ -15,8 +15,8 @@ export const GET_DECK = gql`
 `;
 
 const DRAW_CARD = gql`
-  mutation DrawCard($input: String!) {
-    drawCard(deck_id: $input) {
+  mutation DrawCard($deck_id: String!, $count: Int) {
+    drawCard(deck_id: $deck_id, count: $count) {
       deck_id
       remaining
       success
@@ -32,16 +32,33 @@ const DRAW_CARD = gql`
 `;
 
 export default () => {
+  const [deck, setDeck] = useState({
+    deck_id: "",
+    shuffled: false,
+    remaining: 0,
+    success: false
+  });
   return (
     <Query query={GET_DECK}>
       {({ loading, data }) => {
         if (loading) return null;
-
+        setDeck(data.deck);
         return (
-          <Mutation mutation={DRAW_CARD}>
+          <Mutation
+            mutation={DRAW_CARD}
+            onCompleted={data => {
+              //TODO deck is not properly updated in Deck component
+              setDeck({
+                deck_id: data.drawCard.deck_id,
+                shuffled: data.drawCard.shuffled,
+                remaining: data.drawCard.remaining,
+                success: data.drawCard.success
+              });
+            }}
+          >
             {(executeMutation, { data: mutationData, loading }) => (
               <Deck
-                deck={data.deck}
+                deck={deck}
                 executeMutation={executeMutation}
                 data={mutationData}
                 loading={loading}
