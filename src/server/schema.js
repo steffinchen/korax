@@ -8,12 +8,12 @@ const schema = buildASTSchema(gql`
   }
 
   type Deck {
-    deck_id: String!
+    deckId: String!
     remaining: Int!
     success: Boolean!
     shuffled: Boolean!
-    cards: [Card]
-    piles: [Pile]
+    cards: [Card]!
+    piles: [Pile]!
   }
 
   type Card {
@@ -29,24 +29,31 @@ const schema = buildASTSchema(gql`
   }
 
   type Mutation {
-    drawCard(deck_id: String!, count: Int): Deck!
-    addToPile(deck_id: String!, pile_name: String!, cards: [String]!): Deck!
+    drawCard(deckId: String!, count: Int): Deck!
+    addToPile(deckId: String!, pile_name: String!, cards: [String]!): Deck!
   }
 `);
 
 const root = {
   deck: async () => {
-    return await fetchJson("deck/new/shuffle");
+    console.log("getting deck");
+    const data = await fetchJson("deck/new/shuffle");
+    data.deckId = data.deck_id;
+    delete data.deck_id;
+    data.cards = [];
+    return data;
   },
-  drawCard: async ({ deck_id, count }) => {
-    const data = await fetchJson(`deck/${deck_id}/draw/?count=${count || 1}`);
-    const deck = await fetchJson(`deck/${deck_id}`);
+  drawCard: async ({ deckId, count }) => {
+    console.log("drawing card");
+    const data = await fetchJson(`deck/${deckId}/draw/?count=${count || 1}`);
+    const deck = await fetchJson(`deck/${deckId}`);
     data.shuffled = deck.shuffled;
     return data;
   },
-  addToPile: async ({ deck_id, pile_name, cards }) => {
+  addToPile: async ({ deckId, pile_name, cards }) => {
+    console.log("adding to pile");
     const data = await fetchJson(
-      `deck/${deck_id}/pile/${pile_name}/add/?cards=${cards.join(",")}`
+      `deck/${deckId}/pile/${pile_name}/add/?cards=${cards.join(",")}`
     );
 
     data.piles = Object.keys(data.piles).map(key => {

@@ -4,23 +4,31 @@ const helper = require("./helper");
 jest.mock("./helper");
 
 describe("schema", () => {
-  const deck = {
+  const response = {
     success: true,
     deck_id: "3p40paa87x90",
     shuffled: true,
     remaining: 52
   };
 
+  const deck = {
+    success: true,
+    deckId: "3p40paa87x90",
+    shuffled: true,
+    remaining: 52,
+    cards: []
+  };
+
   describe("when getting a deck", () => {
     beforeEach(() => {
-      helper.fetchJson.mockReturnValueOnce(deck);
+      helper.fetchJson.mockReturnValueOnce(response);
     });
 
     it("returns a new deck", async () => {
       expect.assertions(2);
       const result = await root.deck();
       expect(result.shuffled).toBe(true);
-      expect(result).toBe(deck);
+      expect(result).toEqual(deck);
     });
   });
 
@@ -35,7 +43,7 @@ describe("schema", () => {
           code: "KH"
         }
       ],
-      deck_id: "3p40paa87x90",
+      deckId: "3p40paa87x90",
       remaining: 51
     };
     beforeEach(() => {
@@ -45,7 +53,7 @@ describe("schema", () => {
 
     it("returns a the card", async () => {
       expect.assertions(2);
-      const result = await root.drawCard({ deck_id: "3p40paa87x90" });
+      const result = await root.drawCard({ deckId: "3p40paa87x90" });
       expect(result.shuffled).toBe(true);
       expect(result.cards[0]).toBe(drawResponse.cards[0]);
     });
@@ -54,7 +62,7 @@ describe("schema", () => {
   describe("when adding a card to a pile", () => {
     const addToPileResponse = {
       success: true,
-      deck_id: "3p40paa87x90",
+      deckId: "3p40paa87x90",
       remaining: 50,
       piles: {
         discard: {
@@ -70,7 +78,7 @@ describe("schema", () => {
     it("returns the pile", async () => {
       expect.assertions(3);
       const result = await root.addToPile({
-        deck_id: "3p40paa87x90",
+        deckId: "3p40paa87x90",
         pile_name: "discard",
         cards: ["5H", "KH"]
       });

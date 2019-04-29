@@ -1,23 +1,14 @@
 import React, { useState } from "react";
 import gql from "graphql-tag";
-import { Query, Mutation } from "react-apollo";
+import { Query } from "react-apollo";
 import Deck from "./deck";
+import Pile from "./pile";
+import DrawCardButton from "./draw-card-button";
 
 export const GET_DECK = gql`
   query {
     deck {
-      deck_id
-      remaining
-      success
-      shuffled
-    }
-  }
-`;
-
-const DRAW_CARD = gql`
-  mutation DrawCard($deck_id: String!, $count: Int) {
-    drawCard(deck_id: $deck_id, count: $count) {
-      deck_id
+      deckId
       remaining
       success
       shuffled
@@ -33,38 +24,31 @@ const DRAW_CARD = gql`
 
 export default () => {
   const [deck, setDeck] = useState({
-    deck_id: "",
-    shuffled: false,
+    deckId: "",
     remaining: 0,
-    success: false
+    shuffled: true,
+    success: true,
+    cards: []
   });
   return (
     <Query query={GET_DECK}>
       {({ loading, data }) => {
         if (loading) return null;
-        setDeck(data.deck);
+        //TODO ugly workaround below
+        if (deck.deckId === "") {
+          setDeck(data.deck);
+        }
+        console.log("deck", deck);
         return (
-          <Mutation
-            mutation={DRAW_CARD}
-            onCompleted={data => {
-              //TODO deck is not properly updated in Deck component
-              setDeck({
-                deck_id: data.drawCard.deck_id,
-                shuffled: data.drawCard.shuffled,
-                remaining: data.drawCard.remaining,
-                success: data.drawCard.success
-              });
-            }}
-          >
-            {(executeMutation, { data: mutationData, loading }) => (
-              <Deck
-                deck={deck}
-                executeMutation={executeMutation}
-                data={mutationData}
-                loading={loading}
-              />
-            )}
-          </Mutation>
+          <div>
+            <DrawCardButton deckId={deck.deckId} setDeck={setDeck} />
+            <div>
+              {deck.cards.map((card, i) => (
+                <Pile topCard={card} key={i} />
+              ))}
+            </div>
+            <Deck deck={deck} />
+          </div>
         );
       }}
     </Query>
