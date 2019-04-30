@@ -6,7 +6,7 @@ export default function deck({ deck }) {
   return (
     <div>
       <div>
-        Deck id: {deck.deckId} <br />
+        Deck id: {deck.id} <br />
         Remaining: {deck.remaining} <br />
         Success: {deck.success.toString()} <br />
         Shuffled: {deck.shuffled.toString()} <br />

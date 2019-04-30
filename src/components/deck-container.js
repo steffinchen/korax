@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import gql from "graphql-tag";
-import { Query } from "react-apollo";
+import { useQuery } from "react-apollo-hooks";
+
 import Deck from "./deck";
 import Pile from "./pile";
 import DrawCardButton from "./draw-card-button";
@@ -8,7 +9,7 @@ import DrawCardButton from "./draw-card-button";
 export const GET_DECK = gql`
   query {
     deck {
-      deckId
+      id
       remaining
       success
       shuffled
@@ -23,34 +24,24 @@ export const GET_DECK = gql`
 `;
 
 export default () => {
-  const [deck, setDeck] = useState({
-    deckId: "",
-    remaining: 0,
-    shuffled: true,
-    success: true,
-    cards: []
-  });
+  const { data, error, loading } = useQuery(GET_DECK);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error! {error.message}</div>;
+  }
+
   return (
-    <Query query={GET_DECK}>
-      {({ loading, data }) => {
-        if (loading) return null;
-        //TODO ugly workaround below
-        if (deck.deckId === "") {
-          setDeck(data.deck);
-        }
-        console.log("deck", deck);
-        return (
-          <div>
-            <DrawCardButton deckId={deck.deckId} setDeck={setDeck} />
-            <div>
-              {deck.cards.map((card, i) => (
-                <Pile topCard={card} key={i} />
-              ))}
-            </div>
-            <Deck deck={deck} />
-          </div>
-        );
-      }}
-    </Query>
+    <div>
+      <div>
+        {data.deck.cards.map((card, i) => (
+          <Pile topCard={card} key={i} />
+        ))}
+      </div>
+      <DrawCardButton deckId={data.deck.id} />
+      <Deck deck={data.deck} />
+    </div>
   );
 };

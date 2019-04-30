@@ -1,11 +1,11 @@
 import React from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "react-apollo-hooks";
 import gql from "graphql-tag";
 
 const DRAW_CARD = gql`
-  mutation DrawCard($deckId: String!, $count: Int) {
-    drawCard(deckId: $deckId, count: $count) {
-      deckId
+  mutation DrawCard($id: String!, $count: Int) {
+    drawCard(id: $id, count: $count) {
+      id
       remaining
       success
       shuffled
@@ -19,32 +19,9 @@ const DRAW_CARD = gql`
   }
 `;
 
-export default ({ setDeck, deckId }) => {
-  return (
-    <Mutation
-      mutation={DRAW_CARD}
-      onCompleted={data => {
-        console.log("onCompleted", data.drawCard);
-        setDeck({
-          deckId: data.drawCard.deckId,
-          shuffled: data.drawCard.shuffled,
-          remaining: data.drawCard.remaining,
-          success: data.drawCard.success,
-          cards: data.drawCard.cards
-        });
-      }}
-    >
-      {executeMutation => (
-        <button
-          onClick={() =>
-            executeMutation({
-              variables: { deckId: deckId, count: 5 }
-            })
-          }
-        >
-          Draw Cards
-        </button>
-      )}
-    </Mutation>
-  );
+export default ({ deckId }) => {
+  const drawCards = useMutation(DRAW_CARD, {
+    variables: { id: deckId, count: 5 }
+  });
+  return <button onClick={() => drawCards()}>Draw Cards</button>;
 };
