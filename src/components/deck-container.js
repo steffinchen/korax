@@ -1,6 +1,7 @@
 import React from "react";
 import gql from "graphql-tag";
 import { useQuery } from "react-apollo-hooks";
+import styled from "styled-components";
 
 import Deck from "./deck";
 import Pile from "./pile";
@@ -37,7 +38,7 @@ export default () => {
     <div>
       <div>
         {data.deck.cards.map((card, i) => (
-          <Pile topCard={card} key={i} />
+          <StyledPile topCard={card} key={i} />
         ))}
       </div>
       <DrawCardButton deckId={data.deck.id} />
@@ -45,3 +46,9 @@ export default () => {
     </div>
   );
 };
+
+const StyledPile = styled(Pile)`
+  & + & {
+    padding-left: 5px;
+  }
+`;
