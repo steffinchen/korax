@@ -13,7 +13,7 @@ describe("schema", () => {
 
   const deck = {
     success: true,
-    deckId: "3p40paa87x90",
+    id: "3p40paa87x90",
     shuffled: true,
     remaining: 52,
     cards: []
@@ -43,7 +43,7 @@ describe("schema", () => {
           code: "KH"
         }
       ],
-      deckId: "3p40paa87x90",
+      id: "3p40paa87x90",
       remaining: 51
     };
     beforeEach(() => {
@@ -53,7 +53,7 @@ describe("schema", () => {
 
     it("returns a the card", async () => {
       expect.assertions(2);
-      const result = await root.drawCard({ deckId: "3p40paa87x90" });
+      const result = await root.drawCard({ id: "3p40paa87x90" });
       expect(result.shuffled).toBe(true);
       expect(result.cards[0]).toBe(drawResponse.cards[0]);
     });
@@ -62,7 +62,7 @@ describe("schema", () => {
   describe("when adding a card to a pile", () => {
     const addToPileResponse = {
       success: true,
-      deckId: "3p40paa87x90",
+      id: "3p40paa87x90",
       remaining: 50,
       piles: {
         discard: {
@@ -78,7 +78,7 @@ describe("schema", () => {
     it("returns the pile", async () => {
       expect.assertions(3);
       const result = await root.addToPile({
-        deckId: "3p40paa87x90",
+        id: "3p40paa87x90",
         pile_name: "discard",
         cards: ["5H", "KH"]
       });

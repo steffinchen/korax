@@ -41,7 +41,6 @@ const root = {
     data.id = data.deck_id;
     delete data.deck_id;
     data.cards = [];
-    console.log(data);
     return data;
   },
   drawCard: async ({ id, count }) => {
