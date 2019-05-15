@@ -3,22 +3,24 @@ import styled from "styled-components";
 import { DragSource } from "react-dnd";
 
 const Card = ({ card, className, isDragging, dragSource }) => {
+  const opacity = isDragging ? 0.5 : 1;
   return dragSource(
-    <div className={className}>
-      <Image
-        src={card.image}
-        alt={card.value + " of " + card.suit}
-        isDragging={isDragging}
-      />
-    </div>
+    <Image
+      src={card.image}
+      alt={card.value + " of " + card.suit}
+      className={className}
+      style={{ opacity }}
+    />
   );
 };
-
+const Image = styled.img`
+  height: 200px;
+`;
+/**
+ * Implement the drag source contract.
+ */
 const cardSource = {
-  beginDrag: props => {
-    //these properties are then seen in the target's monitor.getItem
-    return props.card;
-  }
+  beginDrag: props => ({ text: props.text })
 };
 
 /**
@@ -33,7 +35,7 @@ function collect(connect, monitor) {
 
 const Image = styled.img`
   height: 200px;
-  opacity: ${props => (props.isDragging ? 0.5 : 1)};
 `;
 
-export default DragSource("CARD", cardSource, collect)(Card);
+// Export the wrapped component:
+export default DragSource("CARD", cardSource, collect)(Image);
