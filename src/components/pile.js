@@ -14,16 +14,31 @@ const Pile = function({
 }) {
   return connectDropTarget(
     <div>
-      {cards.map(card => (
-        <Card card={card} key={card.code} />
-      ))}
-      {(!cards || cards.length === 0) && <Placeholder />}
+      <Container>
+        {cards.map((card, i) => (
+          <StyledCard card={card} key={card.code} index={i} />
+        ))}
+        {(!cards || cards.length === 0) && <Placeholder />}
+      </Container>
     </div>
   );
 };
 
 const Placeholder = styled.div`
   border: 1px black;
+`;
+
+const Container = styled.div`
+  position: relative;
+`;
+
+const StyledCard = styled(Card)`
+  & + * {
+    /*transform: translateY(-180px);*/
+    position: absolute;
+    top: ${props => (props.index + 1) * 20 + "px"};
+    border: 2px solid red;
+  }
 `;
 
 const squareTarget = {
