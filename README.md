@@ -1,10 +1,10 @@
 # Korax
 
-Korax is a little practice React app which lets you play a card game.
+Korax is a little practice React app which displays a deck of cards.
 
 It uses the [`deckofcards`](https://github.com/crobertsbmw/deckofcards) api to manage the cards.
 
-Used the following articles / tutorials as guides:
+I used the following articles / tutorials as guides:
 
 - https://www.robinwieruch.de/react-graphql-apollo-tutorial/
 - https://developer.okta.com/blog/2018/10/11/build-simple-web-app-with-express-react-graphql
